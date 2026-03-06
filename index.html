@@ -27,9 +27,30 @@
         .container { max-width: 1000px; margin: 0 auto; background: var(--card); padding: 40px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
 
         header { text-align: center; border-bottom: 3px solid var(--primary); margin-bottom: 30px; padding-bottom: 20px; }
-        header h1 { margin: 0; color: var(--primary); font-size: 28px; }
+        header h1 { margin: 0; color: var(--primary); font-size: 28px; margin-bottom: 15px; }
 
-        /* الصندوق العلوي للمتبقي */
+        /* تنسيق جدول الشهر والسنة في الترويسة */
+        .month-year-picker {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px dashed var(--secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .month-year-picker label { font-weight: bold; color: var(--accent); }
+        .month-year-picker input { 
+            padding: 5px 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-family: inherit;
+            text-align: center;
+        }
+
         .summary-banner {
             display: flex;
             justify-content: center;
@@ -48,7 +69,6 @@
         .balance-card span { display: block; font-size: 16px; opacity: 0.9; }
         .balance-card strong { font-size: 36px; display: block; margin-top: 5px; }
 
-        /* الأقسام */
         .grid-section { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
         .card-box { border: 1px solid #eee; padding: 20px; border-radius: 10px; background: #fafafa; }
         .card-box h3 { margin-top: 0; color: var(--primary); font-size: 18px; border-right: 4px solid var(--secondary); padding-right: 10px; margin-bottom: 20px; }
@@ -57,8 +77,6 @@
         .input-group label { display: block; font-size: 14px; margin-bottom: 5px; font-weight: bold; }
         .input-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; }
 
-        /* الجدول */
-        .table-container { margin-top: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         table th { background: var(--primary); color: white; padding: 12px; text-align: right; }
         table td { padding: 12px; border-bottom: 1px solid #eee; }
@@ -70,19 +88,17 @@
         .btn-print { background: var(--accent); color: white; width: 100%; font-size: 18px; margin-top: 30px; padding: 15px; }
         .btn-del { background: var(--danger); color: white; padding: 5px 10px; font-size: 12px; }
 
-        /* تنسيقات الطباعة الاحترافية */
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; margin: 0; padding: 10px; }
             .no-print { display: none !important; }
-            .card-box { background: white; border: 1px solid #ddd; }
+            .card-box { background: white; border: 1px solid #ddd; page-break-inside: avoid; }
             .balance-card { background: #eee !important; color: black !important; border: 2px solid black; box-shadow: none; }
             .balance-card strong { color: black !important; }
             table th { background: #eee !important; color: black !important; border: 1px solid #000; }
-            table td { border: 1px solid #eee; }
-            header h1 { color: black; }
-            .grid-section { grid-template-columns: 1fr 1fr; gap: 15px; }
-            input { border: none !important; padding: 0 !important; font-weight: bold; }
+            .month-year-picker { border: none; background: white; }
+            .month-year-picker input { border: none; font-weight: bold; font-size: 1.1rem; }
+            input { border: none !important; }
         }
     </style>
 </head>
@@ -91,7 +107,12 @@
 <div class="container">
     <header>
         <h1>تقرير ميزانية الأسرة الشهري</h1>
-        <p class="no-print">أدخل بياناتك وسيتم حفظها تلقائياً وتحديث النتائج فوراً</p>
+        <div class="month-year-picker">
+            <label>راتب شهر:</label>
+            <input type="text" id="budgetMonth" class="in-val" placeholder="أدخل الشهر" oninput="saveAllInputs()">
+            <label>سنة:</label>
+            <input type="number" id="budgetYear" class="in-val" placeholder="2024" oninput="saveAllInputs()">
+        </div>
     </header>
 
     <div class="summary-banner">
@@ -111,7 +132,7 @@
             <div class="input-group">
                 <label>دخل إضافي (تحديد المصدر):</label>
                 <div style="display:flex; gap:5px;">
-                    <input type="text" id="extraIncomeNote" placeholder="مصدر الدخل" style="flex:2">
+                    <input type="text" id="extraIncomeNote" class="in-val" placeholder="مصدر الدخل" style="flex:2" oninput="saveAllInputs()">
                     <input type="number" class="in-val" data-type="income" id="extraIncome" placeholder="0" style="flex:1" oninput="calculate()">
                 </div>
             </div>
@@ -142,7 +163,7 @@
                 <div class="input-group"><label>جوال 2:</label><input type="number" class="in-val" data-type="expense" id="mob2" oninput="calculate()"></div>
                 <div class="input-group"><label>جوال 3:</label><input type="number" class="in-val" data-type="expense" id="mob3" oninput="calculate()"></div>
                 <div class="input-group"><label>جوال 4:</label><input type="number" class="in-val" data-type="expense" id="mob4" oninput="calculate()"></div>
-                <div class="input-group"><label>إنترنت المجمع:</label><input type="number" class="in-val" data-type="expense" id="internet" oninput="calculate()"></div>
+                <div class="input-group"><label>إنترنت:</label><input type="number" class="in-val" data-type="expense" id="internet" oninput="calculate()"></div>
             </div>
             <div>
                 <div class="input-group"><label>الكهرباء:</label><input type="number" class="in-val" data-type="expense" id="elec" oninput="calculate()"></div>
@@ -155,14 +176,12 @@
 
     <div class="card-box">
         <h3>جدول المصروفات المشتراة (متغير)</h3>
-        
         <div class="add-row-form no-print">
             <input type="text" id="newItemName" placeholder="ماذا اشتريت؟" style="flex:2">
             <input type="number" id="newItemPrice" placeholder="المبلغ" style="flex:1">
             <input type="date" id="newItemDate" style="flex:1">
             <button class="btn btn-add" onclick="addItem()">إضافة للجدول</button>
         </div>
-
         <table id="dynamicTable">
             <thead>
                 <tr>
@@ -172,8 +191,7 @@
                     <th class="no-print">إجراء</th>
                 </tr>
             </thead>
-            <tbody id="itemsBody">
-                </tbody>
+            <tbody id="itemsBody"></tbody>
         </table>
     </div>
 
@@ -181,23 +199,18 @@
 </div>
 
 <script>
-    // مصفوفة لتخزين المصروفات المتغيرة
     let expensesList = JSON.parse(localStorage.getItem('expensesList')) || [];
-
-    // تعيين التاريخ الافتراضي لليوم
     document.getElementById('newItemDate').valueAsDate = new Date();
 
-    // دالة لحفظ المدخلات النصية والرقمية في LocalStorage
     function saveAllInputs() {
-        const inputs = document.querySelectorAll('.in-val, #extraIncomeNote');
+        const inputs = document.querySelectorAll('.in-val');
         inputs.forEach(input => {
             localStorage.setItem(input.id, input.value);
         });
     }
 
-    // دالة لاستعادة البيانات عند فتح الصفحة
     function loadSavedData() {
-        const inputs = document.querySelectorAll('.in-val, #extraIncomeNote');
+        const inputs = document.querySelectorAll('.in-val');
         inputs.forEach(input => {
             if (localStorage.getItem(input.id)) {
                 input.value = localStorage.getItem(input.id);
@@ -207,95 +220,49 @@
         calculate();
     }
 
-    // دالة الإضافة للجدول
     function addItem() {
         const name = document.getElementById('newItemName');
         const price = document.getElementById('newItemPrice');
         const date = document.getElementById('newItemDate');
 
-        if (name.value === '' || price.value === '') {
-            alert('فضلاً أدخل اسم السلعة والسعر');
-            return;
-        }
+        if (name.value === '' || price.value === '') { alert('فضلاً أدخل اسم السلعة والسعر'); return; }
 
-        const item = {
-            id: Date.now(),
-            name: name.value,
-            price: parseFloat(price.value),
-            date: date.value
-        };
-
+        const item = { id: Date.now(), name: name.value, price: parseFloat(price.value), date: date.value };
         expensesList.push(item);
         localStorage.setItem('expensesList', JSON.stringify(expensesList));
-        
-        name.value = '';
-        price.value = '';
-        
-        renderTable();
-        calculate();
+        name.value = ''; price.value = '';
+        renderTable(); calculate();
     }
 
-    // دالة حذف من الجدول
     function deleteItem(id) {
         expensesList = expensesList.filter(item => item.id !== id);
         localStorage.setItem('expensesList', JSON.stringify(expensesList));
-        renderTable();
-        calculate();
+        renderTable(); calculate();
     }
 
-    // رسم الجدول
     function renderTable() {
         const body = document.getElementById('itemsBody');
         body.innerHTML = '';
         expensesList.forEach(item => {
-            body.innerHTML += `
-                <tr>
-                    <td>${item.name}</td>
-                    <td>${item.date}</td>
-                    <td>${item.price.toFixed(2)}</td>
-                    <td class="no-print"><button class="btn btn-del" onclick="deleteItem(${item.id})">حذف</button></td>
-                </tr>
-            `;
+            body.innerHTML += `<tr><td>${item.name}</td><td>${item.date}</td><td>${item.price.toFixed(2)}</td><td class="no-print"><button class="btn btn-del" onclick="deleteItem(${item.id})">حذف</button></td></tr>`;
         });
     }
 
-    // الحسابات الرئيسية
     function calculate() {
-        let totalIncome = 0;
-        let totalExpenses = 0;
-
-        // جمع المدخلات
+        let totalIncome = 0; let totalExpenses = 0;
         document.querySelectorAll('.in-val').forEach(input => {
             const val = parseFloat(input.value) || 0;
             if (input.dataset.type === 'income') totalIncome += val;
-            else totalExpenses += val;
+            else if (input.dataset.type === 'expense') totalExpenses += val;
         });
-
-        // إضافة مصروفات الجدول
-        expensesList.forEach(item => {
-            totalExpenses += item.price;
-        });
-
+        expensesList.forEach(item => { totalExpenses += item.price; });
         const final = totalIncome - totalExpenses;
-        const finalEl = document.getElementById('finalBalance');
-        const card = document.getElementById('balanceCard');
-
-        finalEl.innerText = final.toLocaleString('ar-SA');
-
-        // تغيير اللون حسب الحالة
-        if (final < 0) {
-            card.style.background = '#d21312';
-        } else {
-            card.style.background = '#002b5b';
-        }
-
+        document.getElementById('finalBalance').innerText = final.toLocaleString('ar-SA');
+        document.getElementById('balanceCard').style.background = (final < 0) ? '#d21312' : '#002b5b';
         saveAllInputs();
     }
 
-    // تحميل البيانات عند بدء التشغيل
     window.onload = loadSavedData;
-
 </script>
-
 </body>
 </html>
