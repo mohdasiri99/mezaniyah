@@ -38,7 +38,7 @@
         h1 {
             text-align: center;
             color: var(--primary-color);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         /* صندوق المتبقي من الدخل */
@@ -48,9 +48,12 @@
             padding: 20px;
             border-radius: 10px;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
             transition: background 0.3s ease;
+            /* منع انقسام الصندوق عند الطباعة */
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .summary-box.negative {
@@ -71,11 +74,14 @@
 
         /* الأقسام */
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             padding: 20px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             background: #fafafa;
+            /* منع انقسام القسم بين صفحتين في الـ PDF */
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .section h3 {
@@ -174,7 +180,7 @@
             gap: 10px;
         }
 
-        /* إخفاء الأزرار عند الطباعة أو تصدير PDF */
+        /* إخفاء العناصر عند التصدير */
         .no-print {
             display: block;
         }
@@ -183,7 +189,7 @@
 <body>
 
 <div class="container" id="budget-content">
-    <h1>ميزانية الأسرة</h1>
+    <h1>ميزانية الأسرة المعتمدة</h1>
 
     <div class="summary-box" id="summaryBox">
         <h2>المتبقي من الدخل</h2>
@@ -263,39 +269,36 @@
         </table>
     </div>
 
-    <button class="btn btn-export no-print" onclick="exportToPDF()">🖨️ تصدير الميزانية كملف PDF</button>
+</div>
 
+<div class="container no-print" style="margin-top: 10px; background: transparent; box-shadow: none; padding: 0;">
+    <button class="btn btn-export" onclick="exportToPDF()">🖨️ تصدير الميزانية كملف PDF</button>
 </div>
 
 <script>
-    // دالة لحساب الميزانية وتحديث الصندوق العلوي
+    // دالة حساب الميزانية
     function calculateBudget() {
         let totalIncome = 0;
         let totalExpenses = 0;
 
-        // جمع الدخل
         document.querySelectorAll('.income').forEach(input => {
             totalIncome += parseFloat(input.value) || 0;
         });
 
-        // جمع الالتزامات والفواتير الثابتة
         document.querySelectorAll('.expense').forEach(input => {
             totalExpenses += parseFloat(input.value) || 0;
         });
 
-        // جمع المصروفات المتغيرة من الجدول
         document.querySelectorAll('.table-expense-val').forEach(td => {
             totalExpenses += parseFloat(td.innerText) || 0;
         });
 
-        // حساب المتبقي
         let remaining = totalIncome - totalExpenses;
         let remainingEl = document.getElementById('totalRemaining');
         let summaryBox = document.getElementById('summaryBox');
 
         remainingEl.innerText = remaining.toLocaleString('en-US');
 
-        // تغيير لون الصندوق إذا كان المتبقي بالسالب
         if (remaining < 0) {
             summaryBox.classList.add('negative');
         } else {
@@ -303,7 +306,7 @@
         }
     }
 
-    // دالة لإضافة مصروف جديد للجدول
+    // دالة الإضافة
     function addExpense() {
         let name = document.getElementById('itemName').value;
         let price = document.getElementById('itemPrice').value;
@@ -326,41 +329,47 @@
 
         tbody.appendChild(row);
 
-        // تفريغ الحقول بعد الإضافة
         document.getElementById('itemName').value = '';
         document.getElementById('itemPrice').value = '';
         
-        // إعادة الحساب
         calculateBudget();
     }
 
-    // دالة لحذف مصروف من الجدول
+    // دالة الحذف
     function removeExpense(btn) {
         btn.parentElement.parentElement.remove();
         calculateBudget();
     }
 
-    // تعيين تاريخ اليوم كافتراضي في خانة التاريخ
     document.getElementById('itemDate').valueAsDate = new Date();
 
-    // دالة تصدير الصفحة كـ PDF
+    // دالة التصدير المحدثة والمحسنة
     function exportToPDF() {
-        // إخفاء العناصر التي لا نريد طباعتها (الأزرار وحقول الإضافة)
+        // 1. إعادة الصفحة للأعلى تماماً لتجنب أي مساحات فارغة بسبب التمرير
+        window.scrollTo(0, 0);
+
+        // 2. إخفاء العناصر غير المرغوب بطباعتها
         let noPrintElements = document.querySelectorAll('.no-print');
         noPrintElements.forEach(el => el.style.display = 'none');
 
         const element = document.getElementById('budget-content');
         
-        // إعدادات ملف الـ PDF
+        // 3. إعدادات الـ PDF الاحترافية
         const opt = {
-            margin:       [10, 10, 10, 10], // هوامش
+            margin:       [15, 10, 15, 10], // هوامش متوازنة: أعلى، يمين، أسفل، يسار
             filename:     'ميزانية_الأسرة.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            image:        { type: 'jpeg', quality: 1 }, // أعلى جودة للصورة
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true, 
+                scrollY: 0, // إجبار الالتقاط من أعلى نقطة
+                windowWidth: 900 // إجبار التنسيق ليكون بحجم شاشة كمبيوتر لتجنب التشوه
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['css', 'legacy'] } // احترام فواصل الصفحات المعرفة في CSS
         };
 
-        // توليد الـ PDF ثم إعادة إظهار الأزرار
+        // 4. توليد الملف ثم إعادة إظهار الأزرار
         html2pdf().set(opt).from(element).save().then(() => {
             noPrintElements.forEach(el => el.style.display = '');
         });
