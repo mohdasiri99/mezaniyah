@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>نموذج تدريب نافس</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; }
+        .header { background-color: #005a4e; color: white; text-align: center; padding: 40px 20px; }
+        .container { max-width: 800px; margin: -20px auto 50px; padding: 20px; }
+        .logo-box { text-align: center; margin-bottom: 20px; }
+        .info-box { background: white; border: 2px solid #005a4e; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .indicator { color: #005a4e; font-weight: bold; border-bottom: 1px dashed #ccc; padding-bottom: 10px; margin-bottom: 15px; }
+        .question-box { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .option { display: block; padding: 10px; margin: 10px 0; border: 1px solid #eee; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .option:hover { background-color: #f0fdf4; border-color: #005a4e; }
+        input[type="radio"] { margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>التدريب على اختبارات نافس</h1>
+        <p>لمادة لغتي - بناءً على معايير هيئة تقويم التعليم</p>
+    </div>
+
+    <div class="container">
+        <div class="logo-box">
+            <div style="font-size: 50px;">🎯</div> 
+        </div>
+
+        <div class="info-box">
+            <div class="indicator">المؤشر: يستنتج الهدف العام للنص المقروء.</div>
+            <p><strong>النص:</strong></p>
+            <p>كان هناك فلاح كسول لا يحب العمل، ينام تحت الشجرة طوال النهار ولا يسقي زرعه... فندم ندماً شديداً وقرر أن يترك الكسل ويبدأ بالعمل بجد.</p>
+        </div>
+
+        <div class="question-box">
+            <p><strong>سؤال 1: الهدف العام من هذه القصة هو الحث على:</strong></p>
+            <label class="option"><input type="radio" name="q1"> النوم تحت الشجر.</label>
+            <label class="option"><input type="radio" name="q1"> العمل والاجتهاد وترك الكسل.</label>
+        </div>
+    </div>
+
+</body>
+</html>
