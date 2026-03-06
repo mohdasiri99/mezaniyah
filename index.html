@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النظام الذكي لإدارة الميزانية</title>
+    <title>النظام الذكي لإدارة الميزانية - الإصدار المطور</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -22,7 +22,6 @@
         .app-container { max-width: 1000px; margin: 20px auto; padding: 20px; }
         .paper { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
 
-        /* ترويسة احترافية */
         header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary); padding-bottom: 20px; margin-bottom: 30px; }
         .logo-area h1 { margin: 0; font-size: 24px; color: var(--primary); }
         .stamp { border: 3px double var(--secondary); padding: 5px 15px; color: var(--secondary); font-weight: bold; transform: rotate(-5deg); border-radius: 8px; opacity: 0.8; }
@@ -30,13 +29,11 @@
         .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
         .meta-item { display: flex; flex-direction: column; font-size: 13px; }
         .meta-item label { font-weight: bold; margin-bottom: 4px; }
-        .meta-item input { border: 1px solid #cbd5e1; padding: 6px; border-radius: 4px; }
+        .meta-item input { border: 1px solid #cbd5e1; padding: 6px; border-radius: 4px; font-family: inherit; }
 
-        /* التحليل البياني */
         .dashboard { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-bottom: 30px; }
         .chart-container { background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
         
-        /* البطاقات السريعة */
         .stat-cards { display: grid; grid-template-columns: 1fr; gap: 10px; }
         .stat-card { padding: 15px; border-radius: 8px; color: white; position: relative; }
         .card-income { background: var(--success); }
@@ -44,33 +41,35 @@
         .stat-card small { font-size: 12px; opacity: 0.9; }
         .stat-card div { font-size: 22px; font-weight: bold; }
 
-        /* المستشار المالي */
         .advisor { background: #fffbeb; border-right: 5px solid var(--warning); padding: 15px; border-radius: 4px; margin-bottom: 25px; font-size: 14px; display: none; }
 
-        /* الأقسام */
         .grid-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .section-box { border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; }
-        .section-box h3 { margin: 0 0 15px 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+        .section-box h3 { margin: 0 0 15px 0; font-size: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: var(--secondary); }
         
-        .entry-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
-        .entry-row label { font-size: 14px; }
-        .entry-row input { width: 90px; border: 1px solid #e2e8f0; padding: 5px; border-radius: 4px; text-align: center; }
+        .entry-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+        .entry-row label { font-size: 14px; font-weight: 500; }
+        .entry-row input { width: 100px; border: 1px solid #e2e8f0; padding: 6px; border-radius: 4px; text-align: center; font-family: inherit; }
 
-        /* أدوات التحكم */
-        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: inherit; transition: 0.2s; font-size: 13px; }
         .btn-main { background: var(--secondary); color: white; }
         .btn-outline { background: #fff; border: 1px solid #cbd5e1; }
         .btn:hover { opacity: 0.8; transform: translateY(-1px); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        th { background: #f8fafc; text-align: right; padding: 10px; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
 
         @media print {
             .no-print { display: none !important; }
             body { background: white; }
             .paper { box-shadow: none; border: none; padding: 0; width: 100%; }
             .entry-row input { display: none; }
-            .print-only-val { display: inline-block !important; font-weight: bold; }
+            .print-only-val { display: inline-block !important; font-weight: bold; color: #000; }
             .dashboard { grid-template-columns: 1fr 1fr; }
-            @page { margin: 1.5cm; }
+            @page { margin: 1cm; size: A4; }
+            .section-box { break-inside: avoid; }
         }
         .print-only-val { display: none; }
     </style>
@@ -79,36 +78,36 @@
 
 <div class="app-container">
     <div class="toolbar no-print">
-        <button class="btn btn-main" onclick="prepareAndPrint()">🖨️ طباعة التقرير النهائي</button>
-        <button class="btn btn-outline" onclick="exportData()">💾 نسخة احتياطية (Export)</button>
-        <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📂 استعادة (Import)</button>
+        <button class="btn btn-main" onclick="prepareAndPrint()">🖨️ طباعة الميزانية النهائية (PDF)</button>
+        <button class="btn btn-outline" onclick="exportData()">💾 حفظ نسخة احتياطية</button>
+        <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📂 استيراد بيانات</button>
         <input type="file" id="importFile" style="display:none" onchange="importData(event)">
-        <button class="btn btn-outline" style="color:var(--danger)" onclick="clearAll()">🗑️ مسح الكل</button>
+        <button class="btn btn-outline" style="color:var(--danger)" onclick="clearAll()">🗑️ مسح السجل</button>
     </div>
 
     <div class="paper" id="mainReport">
         <header>
             <div class="logo-area">
-                <h1>كشف الميزانية المعتمد</h1>
+                <h1>كشف الميزانية المالية الشهري</h1>
                 <div id="printDate" style="font-size:12px; color:#64748b; margin-top:5px;"></div>
             </div>
-            <div class="stamp">مُعتمد ماليًا</div>
+            <div class="stamp">مُعتمد شخصياً</div>
         </header>
 
         <div class="meta-grid">
             <div class="meta-item">
                 <label>راتب شهر:</label>
-                <input type="text" id="m_name" class="in-save" placeholder="مثال: مارس">
+                <input type="text" id="m_name" class="in-save" placeholder="أدخل الشهر">
                 <span class="print-only-val" id="p_m_name"></span>
             </div>
             <div class="meta-item">
-                <label>السنة المالية:</label>
+                <label>السنة:</label>
                 <input type="text" id="m_year" class="in-save" placeholder="2026">
                 <span class="print-only-val" id="p_m_year"></span>
             </div>
             <div class="meta-item">
-                <label>اسم المسؤول:</label>
-                <input type="text" id="u_name" class="in-save" placeholder="اسمك الكريم">
+                <label>المستفيد:</label>
+                <input type="text" id="u_name" class="in-save" placeholder="الاسم الكريم">
                 <span class="print-only-val" id="p_u_name"></span>
             </div>
         </div>
@@ -117,15 +116,15 @@
 
         <div class="dashboard">
             <div class="chart-container">
-                <canvas id="budgetChart" style="max-height: 200px;"></canvas>
+                <canvas id="budgetChart" style="max-height: 180px;"></canvas>
             </div>
             <div class="stat-cards">
                 <div class="stat-card card-income">
-                    <small>إجمالي الدخل</small>
+                    <small>إجمالي الدخل المتاح</small>
                     <div id="totalIncDisp">0 ريال</div>
                 </div>
                 <div class="stat-card card-remaining">
-                    <small>المتبقي الصافي</small>
+                    <small>الصافي المتبقي</small>
                     <div id="totalRemDisp">0 ريال</div>
                 </div>
             </div>
@@ -133,7 +132,7 @@
 
         <div class="grid-sections">
             <div class="section-box">
-                <h3>💰 الدخل والتمويل</h3>
+                <h3>💰 الإيرادات والتمويل</h3>
                 <div class="entry-row">
                     <label>الراتب الأساسي:</label>
                     <input type="number" id="s1" class="calc-in" data-grp="inc" oninput="calc()">
@@ -144,48 +143,59 @@
                     <input type="number" id="s2" class="calc-in" data-grp="inc" oninput="calc()">
                     <span class="print-only-val" id="p_s2">0</span>
                 </div>
-                <div class="entry-row" style="background:#fef2f2">
-                    <label>تمويلات وقروض:</label>
-                    <input type="number" id="s3" class="calc-in" data-grp="debt" oninput="calc()">
-                    <span class="print-only-val" id="p_s3">0</span>
+                <div style="margin-top:10px; padding-top:10px; border-top: 1px dashed #ccc;">
+                    <small style="color:var(--danger); font-weight:bold;">الالتزامات البنكية (تخصم):</small>
+                    <div class="entry-row">
+                        <label>تمويل شخصي:</label>
+                        <input type="number" id="debt_p" class="calc-in" data-grp="debt" oninput="calc()">
+                        <span class="print-only-val" id="p_debt_p">0</span>
+                    </div>
+                    <div class="entry-row">
+                        <label>تمويل عقاري:</label>
+                        <input type="number" id="debt_h" class="calc-in" data-grp="debt" oninput="calc()">
+                        <span class="print-only-val" id="p_debt_h">0</span>
+                    </div>
                 </div>
             </div>
 
             <div class="section-box">
-                <h3>🏠 الفواتير والالتزامات</h3>
+                <h3>🏠 التكاليف والمصاريف الثابتة</h3>
                 <div class="entry-row"><label>الكهرباء والماء:</label><input type="number" id="v1" class="calc-in" data-grp="bill" oninput="calc()"><span class="print-only-val" id="p_v1">0</span></div>
                 <div class="entry-row"><label>اتصالات وإنترنت:</label><input type="number" id="v2" class="calc-in" data-grp="bill" oninput="calc()"><span class="print-only-val" id="p_v2">0</span></div>
-                <div class="entry-row"><label>إيجار / رسوم دراسية:</label><input type="number" id="v3" class="calc-in" data-grp="bill" oninput="calc()"><span class="print-only-val" id="p_v3">0</span></div>
+                <div class="entry-row"><label>إيجار / رسوم دراسة:</label><input type="number" id="v3" class="calc-in" data-grp="bill" oninput="calc()"><span class="print-only-val" id="p_v3">0</span></div>
+                <div class="entry-row" style="background:#f0f9ff"><label>مصروف شخصي:</label><input type="number" id="v_pers" class="calc-in" data-grp="bill" oninput="calc()"><span class="print-only-val" id="p_v_pers">0</span></div>
+                <div class="entry-row" style="background:#f0f9ff"><label>مواصلات / وقود:</label><input type="number" id="v_trans" class="calc-in" data-grp="bill" oninput="calc()"><span class="print-only-val" id="p_v_trans">0</span></div>
             </div>
         </div>
 
         <div class="section-box" style="margin-top:20px;">
-            <h3>🛒 سجل المصروفات المتغيرة</h3>
-            <div class="no-print" style="margin-bottom:15px; display:flex; gap:10px;">
-                <input type="text" id="itemName" placeholder="البيان" style="flex:2; padding:8px;">
+            <h3>🛒 قائمة المشتريات اليومية (متغير)</h3>
+            <div class="no-print" style="margin-bottom:15px; display:flex; gap:10px; background: #f1f5f9; padding: 10px; border-radius: 8px;">
+                <input type="text" id="itemName" placeholder="اسم السلعة" style="flex:2; padding:8px;">
                 <input type="number" id="itemVal" placeholder="المبلغ" style="flex:1; padding:8px;">
-                <button class="btn btn-main" onclick="addItem()">إضافة</button>
+                <button class="btn btn-main" onclick="addItem()">إضافة للجدول</button>
             </div>
-            <table style="width:100%; border-collapse: collapse; font-size:13px;">
+            <table>
                 <thead>
-                    <tr style="background:#f8fafc; text-align:right;">
-                        <th style="padding:10px; border-bottom:2px solid #e2e8f0;">البيان</th>
-                        <th style="padding:10px; border-bottom:2px solid #e2e8f0;">المبلغ</th>
-                        <th class="no-print" style="padding:10px; border-bottom:2px solid #e2e8f0;">إجراء</th>
+                    <tr>
+                        <th>البيان</th>
+                        <th>المبلغ</th>
+                        <th class="no-print">إجراء</th>
                     </tr>
                 </thead>
                 <tbody id="itemBody"></tbody>
             </table>
         </div>
 
-        <footer style="margin-top:40px; border-top:1px solid #e2e8f0; padding-top:20px; text-align:left; font-style:italic; font-size:12px;">
-            صدر هذا التقرير آليًا بواسطة نظام الإدارة الذكي - المبرمج العبقري ©
+        <footer style="margin-top:30px; border-top:1px solid #eee; padding-top:15px; display: flex; justify-content: space-between; font-size: 11px; color: #666;">
+            <span>نظام الإدارة المالية الذكي v2.0</span>
+            <span>توقيع العميل: ___________________</span>
         </footer>
     </div>
 </div>
 
 <script>
-    let dynamicItems = JSON.parse(localStorage.getItem('genius_items')) || [];
+    let dynamicItems = JSON.parse(localStorage.getItem('genius_v2_items')) || [];
     let myChart;
 
     function initChart() {
@@ -193,10 +203,10 @@
         myChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['مدخرات', 'ديون', 'فواتير', 'مصروفات'],
-                datasets: [{ data: [100, 0, 0, 0], backgroundColor: ['#059669', '#dc2626', '#0891b2', '#d97706'] }]
+                labels: ['المتبقي', 'الديون', 'الفواتير الثابتة', 'مصروفات متغيرة'],
+                datasets: [{ data: [100, 0, 0, 0], backgroundColor: ['#059669', '#dc2626', '#0891b2', '#d97706'], borderWidth: 0 }]
             },
-            options: { plugins: { legend: { position: 'bottom', labels: { font: { family: 'Noto Sans Arabic' } } } } }
+            options: { cutout: '70%', plugins: { legend: { position: 'bottom', labels: { font: { family: 'Noto Sans Arabic', size: 10 } } } } }
         });
     }
 
@@ -212,26 +222,27 @@
 
         let remaining = totals.inc - (totals.debt + totals.bill + totals.spend);
         
-        // تحديث الواجهة
         document.getElementById('totalIncDisp').innerText = totals.inc.toLocaleString() + ' ريال';
         document.getElementById('totalRemDisp').innerText = remaining.toLocaleString() + ' ريال';
         
-        // تحديث الرسم البياني
         myChart.data.datasets[0].data = [Math.max(0, remaining), totals.debt, totals.bill, totals.spend];
         myChart.update();
 
-        // المستشار الذكي
+        // المستشار الذكي المحدث
         const advisor = document.getElementById('financialAdvisor');
         let debtRatio = (totals.debt / totals.inc) * 100;
         
-        if (debtRatio > 33) {
+        if (debtRatio > 45) {
             advisor.style.display = 'block';
-            advisor.innerText = `⚠️ تنبيه مالي: التزاماتك تمثل ${debtRatio.toFixed(1)}% من دخلك. هذا يتجاوز الحد الآمن (33%). ينصح بإعادة الجدولة.`;
-        } else if (remaining > (totals.inc * 0.2)) {
+            advisor.className = 'advisor'; advisor.style.borderColor = '#dc2626'; advisor.style.background = '#fef2f2';
+            advisor.innerText = `⚠️ تنبيه حرج: الالتزامات البنكية (العقاري والشخصي) تستهلك ${debtRatio.toFixed(1)}% من دخلك. هذا وضع مالي ضاغط جداً.`;
+        } else if (remaining < 0) {
             advisor.style.display = 'block';
-            advisor.style.borderColor = '#059669';
-            advisor.style.background = '#ecfdf5';
-            advisor.innerText = `✅ رائع! أنت تدخر أكثر من 20% من دخلك. وضعك المالي ممتاز.`;
+            advisor.innerText = `❌ ميزانية عاجزة: المصاريف تتجاوز الدخل بمقدار ${Math.abs(remaining)} ريال. راجع قائمة المشتريات المتغيرة فوراً.`;
+        } else if (remaining > (totals.inc * 0.15)) {
+            advisor.style.display = 'block';
+            advisor.style.borderColor = '#059669'; advisor.style.background = '#ecfdf5';
+            advisor.innerText = `🌟 وضع ممتاز: نجحت في الحفاظ على فائض يمثل ${((remaining/totals.inc)*100).toFixed(1)}% من دخلك.`;
         } else { advisor.style.display = 'none'; }
 
         save();
@@ -241,18 +252,17 @@
         let n = document.getElementById('itemName'), v = document.getElementById('itemVal');
         if(!n.value || !v.value) return;
         dynamicItems.push({ n: n.value, v: parseFloat(v.value) });
-        n.value = ''; v.value = '';
-        renderItems(); calc();
+        n.value = ''; v.value = ''; renderItems(); calc();
     }
 
     function renderItems() {
         const b = document.getElementById('itemBody');
         b.innerHTML = '';
         dynamicItems.forEach((item, i) => {
-            b.innerHTML += `<tr style="border-bottom:1px solid #f1f5f9">
-                <td style="padding:8px;">${item.n}</td>
-                <td style="padding:8px;">${item.v.toLocaleString()} ريال</td>
-                <td class="no-print" style="padding:8px;"><button onclick="removeItem(${i})" style="color:red; border:none; background:none; cursor:pointer">✖</button></td>
+            b.innerHTML += `<tr>
+                <td>${item.n}</td>
+                <td>${item.v.toLocaleString()} ريال</td>
+                <td class="no-print"><button onclick="removeItem(${i})" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold">✖</button></td>
             </tr>`;
         });
     }
@@ -260,15 +270,15 @@
     function removeItem(i) { dynamicItems.splice(i, 1); renderItems(); calc(); }
 
     function save() {
-        document.querySelectorAll('.calc-in, .in-save').forEach(i => localStorage.setItem('genius_'+i.id, i.value));
-        localStorage.setItem('genius_items', JSON.stringify(dynamicItems));
+        document.querySelectorAll('.calc-in, .in-save').forEach(i => localStorage.setItem('v2_'+i.id, i.value));
+        localStorage.setItem('genius_v2_items', JSON.stringify(dynamicItems));
     }
 
     function load() {
         document.querySelectorAll('.calc-in, .in-save').forEach(i => {
-            if(localStorage.getItem('genius_'+i.id)) i.value = localStorage.getItem('genius_'+i.id);
+            if(localStorage.getItem('v2_'+i.id)) i.value = localStorage.getItem('v2_'+i.id);
         });
-        document.getElementById('printDate').innerText = 'تاريخ الاستخراج: ' + new Date().toLocaleDateString('ar-SA');
+        document.getElementById('printDate').innerText = 'تاريخ التقرير: ' + new Date().toLocaleDateString('ar-SA');
         renderItems(); calc();
     }
 
@@ -280,32 +290,25 @@
         window.print();
     }
 
-    // ميزات العبقرية: Backup & Restore
     function exportData() {
         const data = { inputs: {}, items: dynamicItems };
         document.querySelectorAll('.calc-in, .in-save').forEach(i => data.inputs[i.id] = i.value);
         const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = `budget_backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
+        a.href = URL.createObjectURL(blob); a.download = `my_budget_v2.json`; a.click();
     }
 
     function importData(e) {
         const reader = new FileReader();
         reader.onload = (event) => {
             const data = JSON.parse(event.target.result);
-            Object.keys(data.inputs).forEach(key => {
-                const el = document.getElementById(key);
-                if(el) el.value = data.inputs[key];
-            });
-            dynamicItems = data.items;
-            renderItems(); calc();
+            Object.keys(data.inputs).forEach(key => { if(document.getElementById(key)) document.getElementById(key).value = data.inputs[key]; });
+            dynamicItems = data.items; renderItems(); calc();
         };
         reader.readAsText(e.target.files[0]);
     }
 
-    function clearAll() { if(confirm('هل أنت متأكد من مسح كافة البيانات؟')) { localStorage.clear(); location.reload(); } }
+    function clearAll() { if(confirm('هل تريد مسح ميزانية هذا الشهر بالكامل؟')) { localStorage.clear(); location.reload(); } }
 
     window.onload = () => { initChart(); load(); };
 </script>
