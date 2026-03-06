@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ميزانية الأسرة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #27ae60;
+            --danger-color: #e74c3c;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        /* صندوق المتبقي من الدخل */
+        .summary-box {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
+            transition: background 0.3s ease;
+        }
+
+        .summary-box.negative {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .summary-box h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .summary-box .amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* الأقسام */
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .section h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="number"], input[type="text"], input[type="date"] {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        /* جدول المصروفات */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: right;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-export {
+            background-color: var(--primary-color);
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* إخفاء الأزرار عند الطباعة أو تصدير PDF */
+        .no-print {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="budget-content">
+    <h1>ميزانية الأسرة</h1>
+
+    <div class="summary-box" id="summaryBox">
+        <h2>المتبقي من الدخل</h2>
+        <div class="amount"><span id="totalRemaining">0</span> ريال</div>
+    </div>
+
+    <div class="section">
+        <h3>مصادر الدخل</h3>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>الدخل الأساسي (الراتب):</label>
+                <input type="number" class="calc-input income" placeholder="0" oninput="calculateBudget()">
+            </div>
+            <div class="form-group">
+                <label>دخل إضافي (تحديده):</label>
+                <div class="flex-row">
+                    <input type="text" placeholder="اسم الدخل الإضافي" style="flex: 1;">
+                    <input type="number" class="calc-input income" placeholder="0" style="flex: 1;" oninput="calculateBudget()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>الالتزامات</h3>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>التمويل الشخصي:</label>
+                <input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()">
+            </div>
+            <div class="form-group">
+                <label>التمويل التأجيري:</label>
+                <input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()">
+            </div>
+            <div class="form-group full-width">
+                <label>الالتزامات الأخرى (ديون أو مستحقات):</label>
+                <input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()">
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>الفواتير الأساسية</h3>
+        <div class="grid-2">
+            <div class="form-group"><label>فاتورة جوال 1:</label><input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()"></div>
+            <div class="form-group"><label>فاتورة جوال 2:</label><input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()"></div>
+            <div class="form-group"><label>فاتورة جوال 3:</label><input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()"></div>
+            <div class="form-group"><label>فاتورة جوال 4:</label><input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()"></div>
+            <div class="form-group"><label>الانترنت:</label><input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()"></div>
+            <div class="form-group"><label>الكهرباء:</label><input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()"></div>
+            <div class="form-group"><label>الماء:</label><input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()"></div>
+            <div class="form-group"><label>تكاليف مدرسة:</label><input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()"></div>
+            <div class="form-group full-width"><label>تكاليف مواصلات:</label><input type="number" class="calc-input expense" placeholder="0" oninput="calculateBudget()"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>المصروفات اليومية / المتفرقة</h3>
+        <div class="grid-2 no-print" style="margin-bottom: 15px;">
+            <input type="text" id="itemName" placeholder="وصف المشتريات (مثال: مقاضي السوبرماركت)">
+            <input type="number" id="itemPrice" placeholder="المبلغ">
+            <input type="date" id="itemDate">
+            <button class="btn" onclick="addExpense()">+ إضافة للمصروفات</button>
+        </div>
+        
+        <table id="expensesTable">
+            <thead>
+                <tr>
+                    <th>البيان</th>
+                    <th>التاريخ</th>
+                    <th>المبلغ (ريال)</th>
+                    <th class="no-print" style="width: 80px;">إجراء</th>
+                </tr>
+            </thead>
+            <tbody id="expensesBody">
+                </tbody>
+        </table>
+    </div>
+
+    <button class="btn btn-export no-print" onclick="exportToPDF()">🖨️ تصدير الميزانية كملف PDF</button>
+
+</div>
+
+<script>
+    // دالة لحساب الميزانية وتحديث الصندوق العلوي
+    function calculateBudget() {
+        let totalIncome = 0;
+        let totalExpenses = 0;
+
+        // جمع الدخل
+        document.querySelectorAll('.income').forEach(input => {
+            totalIncome += parseFloat(input.value) || 0;
+        });
+
+        // جمع الالتزامات والفواتير الثابتة
+        document.querySelectorAll('.expense').forEach(input => {
+            totalExpenses += parseFloat(input.value) || 0;
+        });
+
+        // جمع المصروفات المتغيرة من الجدول
+        document.querySelectorAll('.table-expense-val').forEach(td => {
+            totalExpenses += parseFloat(td.innerText) || 0;
+        });
+
+        // حساب المتبقي
+        let remaining = totalIncome - totalExpenses;
+        let remainingEl = document.getElementById('totalRemaining');
+        let summaryBox = document.getElementById('summaryBox');
+
+        remainingEl.innerText = remaining.toLocaleString('en-US');
+
+        // تغيير لون الصندوق إذا كان المتبقي بالسالب
+        if (remaining < 0) {
+            summaryBox.classList.add('negative');
+        } else {
+            summaryBox.classList.remove('negative');
+        }
+    }
+
+    // دالة لإضافة مصروف جديد للجدول
+    function addExpense() {
+        let name = document.getElementById('itemName').value;
+        let price = document.getElementById('itemPrice').value;
+        let date = document.getElementById('itemDate').value;
+
+        if (!name || !price) {
+            alert('الرجاء إدخال البيان والمبلغ!');
+            return;
+        }
+
+        let tbody = document.getElementById('expensesBody');
+        let row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${name}</td>
+            <td>${date}</td>
+            <td class="table-expense-val">${parseFloat(price).toFixed(2)}</td>
+            <td class="no-print"><button class="btn btn-danger" onclick="removeExpense(this)">حذف</button></td>
+        `;
+
+        tbody.appendChild(row);
+
+        // تفريغ الحقول بعد الإضافة
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemPrice').value = '';
+        
+        // إعادة الحساب
+        calculateBudget();
+    }
+
+    // دالة لحذف مصروف من الجدول
+    function removeExpense(btn) {
+        btn.parentElement.parentElement.remove();
+        calculateBudget();
+    }
+
+    // تعيين تاريخ اليوم كافتراضي في خانة التاريخ
+    document.getElementById('itemDate').valueAsDate = new Date();
+
+    // دالة تصدير الصفحة كـ PDF
+    function exportToPDF() {
+        // إخفاء العناصر التي لا نريد طباعتها (الأزرار وحقول الإضافة)
+        let noPrintElements = document.querySelectorAll('.no-print');
+        noPrintElements.forEach(el => el.style.display = 'none');
+
+        const element = document.getElementById('budget-content');
+        
+        // إعدادات ملف الـ PDF
+        const opt = {
+            margin:       [10, 10, 10, 10], // هوامش
+            filename:     'ميزانية_الأسرة.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // توليد الـ PDF ثم إعادة إظهار الأزرار
+        html2pdf().set(opt).from(element).save().then(() => {
+            noPrintElements.forEach(el => el.style.display = '');
+        });
+    }
+</script>
+
+</body>
+</html>
