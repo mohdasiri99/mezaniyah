@@ -4,189 +4,178 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ميزانية الأسرة المعتمدة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #1a5f7a;
-            --secondary: #159895;
             --accent: #002b5b;
-            --bg: #f4f7f6;
-            --card: #ffffff;
+            --border: #d1d5db;
         }
 
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
+        body { font-family: 'Noto Sans Arabic', sans-serif; background: #f3f4f6; margin: 0; padding: 20px; color: #1f2937; }
+
+        .paper {
+            width: 210mm; /* عرض ورق A4 */
+            margin: 0 auto;
+            background: #fff;
+            padding: 20mm;
+            min-height: 297mm;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* الترويسة */
+        .header { text-align: center; border-bottom: 3px solid var(--primary); margin-bottom: 30px; padding-bottom: 10px; }
+        .header h1 { margin: 0; color: var(--primary); font-size: 26px; }
         
-        body {
-            font-family: 'Noto Kufi Arabic', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 10px;
-        }
+        .meta-data { display: flex; justify-content: space-between; margin-top: 15px; font-weight: bold; border: 1px solid #eee; padding: 10px; border-radius: 5px; }
+        .meta-data div { display: flex; gap: 10px; }
 
-        /* الحاوية الرئيسية مضبوطة للطباعة */
-        .container { 
-            width: 100%;
-            max-width: 850px; /* العرض المثالي لورق A4 */
-            margin: 0 auto; 
-            background: var(--card); 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
-        }
-
-        header { text-align: center; border-bottom: 2px solid var(--primary); margin-bottom: 25px; padding-bottom: 15px; }
-        header h1 { margin: 0; color: var(--primary); font-size: 24px; }
-
-        .header-info {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-        .header-info input {
-            border: 1px solid #ddd;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-family: inherit;
-            text-align: center;
-            width: 120px;
-        }
-
-        .summary-banner {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        .balance-card {
-            background: var(--accent);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 12px;
-            text-align: center;
-            min-width: 280px;
-        }
-        .balance-card strong { font-size: 32px; display: block; }
-
-        /* الأقسام الجانبية */
-        .sections-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .card-box {
-            flex: 1;
-            min-width: 300px;
-            border: 1px solid #eee;
+        /* صندوق المتبقي */
+        .balance-box {
+            border: 2px solid var(--accent);
+            width: 250px;
+            margin: 20px auto 40px;
             padding: 15px;
-            border-radius: 8px;
-            background: #fafafa;
-            page-break-inside: avoid;
+            text-align: center;
+            border-radius: 10px;
+            background: #f9fafb;
         }
-        .card-box h3 { margin-top: 0; color: var(--primary); font-size: 16px; border-right: 3px solid var(--secondary); padding-right: 8px; }
+        .balance-box span { font-size: 14px; display: block; color: #6b7280; }
+        .balance-box strong { font-size: 30px; color: var(--accent); }
 
-        .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 13px; margin-bottom: 4px; font-weight: bold; }
-        .input-group input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
-
-        /* الجدول */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        table th { background: var(--primary); color: white; padding: 10px; text-align: right; }
-        table td { padding: 10px; border-bottom: 1px solid #eee; }
+        /* الشبكة الأساسية */
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
         
-        .no-print-area { background: #eef2f3; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        .add-row-form { display: flex; gap: 10px; }
-        
-        .btn { cursor: pointer; border: none; border-radius: 4px; padding: 8px 15px; font-family: inherit; font-weight: bold; }
-        .btn-add { background: var(--secondary); color: white; }
-        .btn-print { background: var(--accent); color: white; width: 100%; font-size: 18px; margin-top: 20px; padding: 15px; }
-        .btn-del { background: #ff4d4d; color: white; padding: 3px 8px; font-size: 11px; }
+        .section-card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .section-card h3 { 
+            background: #f8fafc; 
+            margin: 0; 
+            padding: 10px; 
+            font-size: 16px; 
+            color: var(--primary); 
+            border-bottom: 1px solid var(--border);
+            border-right: 4px solid var(--primary);
+        }
 
-        /* ضبط الطباعة النهائي */
+        .row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f3f4f6; align-items: center; }
+        .row:last-child { border-bottom: none; }
+        .row label { font-weight: 500; font-size: 14px; }
+        .row .val { font-weight: bold; color: #111827; }
+
+        /* إخفاء المدخلات عند الطباعة وإظهار القيم فقط */
+        .row input { width: 80px; text-align: left; border: 1px solid #ddd; border-radius: 4px; padding: 4px; font-family: inherit; }
+        
+        /* جدول المصروفات */
+        .expenses-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .expenses-table th { background: #f8fafc; text-align: right; padding: 10px; border: 1px solid var(--border); font-size: 13px; }
+        .expenses-table td { padding: 10px; border: 1px solid var(--border); font-size: 13px; }
+
+        .no-print { margin-top: 20px; text-align: center; }
+        .btn { padding: 12px 25px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; font-family: inherit; }
+        .btn-print { background: var(--accent); color: white; width: 210mm; margin: 20px auto; display: block; font-size: 18px; }
+        .btn-add { background: #10b981; color: white; margin-bottom: 10px; }
+
         @media print {
-            @page { size: A4; margin: 1cm; }
-            body { background: white; padding: 0; }
-            .container { width: 100%; max-width: 100%; border: none; box-shadow: none; padding: 0; }
+            body { background: none; padding: 0; }
+            .paper { box-shadow: none; width: 100%; padding: 10mm; margin: 0; }
             .no-print { display: none !important; }
-            .card-box { background: white !important; border: 1px solid #ccc; break-inside: avoid; }
-            .balance-card { border: 2px solid #000; color: #000 !important; background: #f0f0f0 !important; }
-            input { border: none !important; font-weight: bold; font-size: 14px; background: transparent; }
-            table th { background: #f0f0f0 !important; color: black !important; border: 1px solid #000; }
-            table td { border: 1px solid #eee; }
+            .row input { display: none; } /* إخفاء خانات الإدخال */
+            .row .print-val { display: inline !important; } /* إظهار القيمة كنص */
+            .btn-print { display: none; }
         }
+
+        /* قيمة تظهر فقط في الطباعة */
+        .print-val { display: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
+<div class="paper" id="content">
+    <div class="header">
         <h1>تقرير ميزانية الأسرة الشهري</h1>
-        <div class="header-info">
-            <span>راتب شهر:</span>
-            <input type="text" id="m_name" class="in-save" placeholder="أدخل الشهر">
-            <span>لسنة:</span>
-            <input type="text" id="m_year" class="in-save" placeholder="2026">
-        </div>
-    </header>
-
-    <div class="summary-banner">
-        <div class="balance-card" id="cardStyle">
-            <span>المتبقي من الدخل</span>
-            <strong><span id="finalBalance">0</span> ريال</strong>
+        <div class="meta-data">
+            <div>
+                <span>راتب شهر:</span>
+                <input type="text" id="m_name" class="in-save" placeholder="مثال: فبراير">
+                <span class="print-val" id="p_m_name"></span>
+            </div>
+            <div>
+                <span>السنة:</span>
+                <input type="text" id="m_year" class="in-save" placeholder="2026">
+                <span class="print-val" id="p_m_year"></span>
+            </div>
         </div>
     </div>
 
-    <div class="sections-grid">
-        <div class="card-box">
-            <h3>الدخل الشهري</h3>
-            <div class="input-group">
-                <label>الراتب الأساسي:</label>
+    <div class="balance-box">
+        <span>المبلغ المتبقي الصافي</span>
+        <strong><span id="finalBalance">0</span> ريال</strong>
+    </div>
+
+    <div class="main-grid">
+        <div class="section-card">
+            <h3>إيرادات الدخل</h3>
+            <div class="row">
+                <label>الدخل الأساسي (الراتب):</label>
                 <input type="number" class="calc-in" data-type="plus" id="sal" oninput="calc()">
+                <span class="print-val" id="p_sal">0</span>
             </div>
-            <div class="input-group">
-                <label>دخل إضافي (تحديده):</label>
-                <div style="display:flex; gap:5px;">
-                    <input type="text" id="ext_note" class="in-save" placeholder="المصدر" style="flex:1">
-                    <input type="number" class="calc-in" data-type="plus" id="ext_val" placeholder="0" style="width:100px" oninput="calc()">
+            <div class="row">
+                <label id="p_ext_note_lbl">دخل إضافي:</label>
+                <div class="no-print">
+                    <input type="text" id="ext_note" class="in-save" placeholder="المصدر" style="width:100px; margin-left:5px" oninput="save()">
+                    <input type="number" class="calc-in" data-type="plus" id="ext_val" oninput="calc()">
                 </div>
+                <span class="print-val" id="p_ext_val">0</span>
             </div>
         </div>
 
-        <div class="card-box">
-            <h3>الالتزامات والتمويل</h3>
-            <div class="input-group"><label>تمويل شخصي:</label><input type="number" class="calc-in" id="l1" oninput="calc()"></div>
-            <div class="input-group"><label>تمويل تأجيري:</label><input type="number" class="calc-in" id="l2" oninput="calc()"></div>
-            <div class="input-group"><label>ديون ومستحقات:</label><input type="number" class="calc-in" id="l3" oninput="calc()"></div>
+        <div class="section-card">
+            <h3>الالتزامات البنكية</h3>
+            <div class="row">
+                <label>التمويل الشخصي:</label>
+                <input type="number" class="calc-in" id="l1" oninput="calc()">
+                <span class="print-val" id="p_l1">0</span>
+            </div>
+            <div class="row">
+                <label>التمويل التأجيري:</label>
+                <input type="number" class="calc-in" id="l2" oninput="calc()">
+                <span class="print-val" id="p_l2">0</span>
+            </div>
+            <div class="row">
+                <label>ديون أخرى:</label>
+                <input type="number" class="calc-in" id="l3" oninput="calc()">
+                <span class="print-val" id="p_l3">0</span>
+            </div>
         </div>
     </div>
 
-    <div class="card-box" style="margin-bottom:20px; width:100%">
-        <h3>الفواتير الأساسية</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
-            <div class="input-group"><label>جوال 1:</label><input type="number" class="calc-in" id="f1" oninput="calc()"></div>
-            <div class="input-group"><label>جوال 2:</label><input type="number" class="calc-in" id="f2" oninput="calc()"></div>
-            <div class="input-group"><label>جوال 3:</label><input type="number" class="calc-in" id="f3" oninput="calc()"></div>
-            <div class="input-group"><label>جوال 4:</label><input type="number" class="calc-in" id="f4" oninput="calc()"></div>
-            <div class="input-group"><label>انترنت:</label><input type="number" class="calc-in" id="f5" oninput="calc()"></div>
-            <div class="input-group"><label>كهرباء:</label><input type="number" class="calc-in" id="f6" oninput="calc()"></div>
-            <div class="input-group"><label>ماء:</label><input type="number" class="calc-in" id="f7" oninput="calc()"></div>
-            <div class="input-group"><label>مدرسة:</label><input type="number" class="calc-in" id="f8" oninput="calc()"></div>
-            <div class="input-group"><label>مواصلات:</label><input type="number" class="calc-in" id="f9" oninput="calc()"></div>
+    <div class="section-card" style="margin-bottom:25px;">
+        <h3>الفواتير والمصاريف الثابتة</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap:0 20px;">
+            <div class="row"><label>جوال 1:</label><input type="number" class="calc-in" id="f1" oninput="calc()"><span class="print-val" id="p_f1">0</span></div>
+            <div class="row"><label>جوال 2:</label><input type="number" class="calc-in" id="f2" oninput="calc()"><span class="print-val" id="p_f2">0</span></div>
+            <div class="row"><label>جوال 3:</label><input type="number" class="calc-in" id="f3" oninput="calc()"><span class="print-val" id="p_f3">0</span></div>
+            <div class="row"><label>جوال 4:</label><input type="number" class="calc-in" id="f4" oninput="calc()"><span class="print-val" id="p_f4">0</span></div>
+            <div class="row"><label>انترنت:</label><input type="number" class="calc-in" id="f5" oninput="calc()"><span class="print-val" id="p_f5">0</span></div>
+            <div class="row"><label>كهرباء:</label><input type="number" class="calc-in" id="f6" oninput="calc()"><span class="print-val" id="p_f6">0</span></div>
+            <div class="row"><label>ماء:</label><input type="number" class="calc-in" id="f7" oninput="calc()"><span class="print-val" id="p_f7">0</span></div>
+            <div class="row"><label>مدرسة:</label><input type="number" class="calc-in" id="f8" oninput="calc()"><span class="print-val" id="p_f8">0</span></div>
+            <div class="row" style="grid-column: span 2;"><label>مواصلات:</label><input type="number" class="calc-in" id="f9" oninput="calc()"><span class="print-val" id="p_f9">0</span></div>
         </div>
     </div>
 
-    <div class="card-box" style="width:100%">
+    <div class="section-card">
         <h3>جدول المشتريات والمصروفات</h3>
-        <div class="no-print no-print-area">
-            <div class="add-row-form">
-                <input type="text" id="ni_n" placeholder="البيان" style="flex:2">
-                <input type="number" id="ni_p" placeholder="المبلغ" style="width:100px">
-                <input type="date" id="ni_d" style="width:150px">
-                <button class="btn btn-add" onclick="addRow()">+ إضافة</button>
-            </div>
+        <div class="no-print" style="padding:10px; background:#f0fdf4">
+            <input type="text" id="ni_n" placeholder="البيان" style="width:40%">
+            <input type="number" id="ni_p" placeholder="المبلغ" style="width:20%">
+            <input type="date" id="ni_d" style="width:25%">
+            <button class="btn btn-add" onclick="addRow()">+ إضافة</button>
         </div>
-        <table id="itemsTable">
+        <table class="expenses-table">
             <thead>
                 <tr>
                     <th>البيان</th>
@@ -198,44 +187,52 @@
             <tbody id="tBody"></tbody>
         </table>
     </div>
-
-    <button class="btn btn-print no-print" onclick="window.print()">🖨️ طباعة الميزانية أو حفظ PDF</button>
 </div>
 
+<button class="btn btn-print no-print" onclick="prepareAndPrint()">🖨️ طباعة الميزانية (PDF)</button>
+
 <script>
-    let list = JSON.parse(localStorage.getItem('my_budget_list')) || [];
-    document.getElementById('ni_d').valueAsDate = new Date();
+    let list = JSON.parse(localStorage.getItem('budget_v3_list')) || [];
+    
+    function prepareAndPrint() {
+        // نقل قيم المدخلات إلى نصوص الطباعة
+        document.querySelectorAll('input').forEach(input => {
+            let pSpan = document.getElementById('p_' + input.id);
+            if (pSpan) pSpan.innerText = input.value || (input.type === 'number' ? '0' : '---');
+        });
+        
+        // معالجة ملاحظة الدخل الإضافي
+        let note = document.getElementById('ext_note').value;
+        if(note) document.getElementById('p_ext_note_lbl').innerText = "دخل إضافي (" + note + "):";
+        
+        window.print();
+    }
 
     function save() {
-        document.querySelectorAll('.calc-in, .in-save').forEach(i => localStorage.setItem(i.id, i.value));
-        localStorage.setItem('my_budget_list', JSON.stringify(list));
+        document.querySelectorAll('.calc-in, .in-save').forEach(i => localStorage.setItem('v3_'+i.id, i.value));
+        localStorage.setItem('budget_v3_list', JSON.stringify(list));
     }
 
     function load() {
         document.querySelectorAll('.calc-in, .in-save').forEach(i => {
-            if(localStorage.getItem(i.id)) i.value = localStorage.getItem(i.id);
+            if(localStorage.getItem('v3_'+i.id)) i.value = localStorage.getItem('v3_'+i.id);
         });
-        render();
-        calc();
+        render(); calc();
     }
 
     function addRow() {
         let n = document.getElementById('ni_n'), p = document.getElementById('ni_p'), d = document.getElementById('ni_d');
         if(!n.value || !p.value) return;
         list.push({id: Date.now(), n: n.value, p: parseFloat(p.value), d: d.value});
-        n.value = ''; p.value = '';
-        render(); calc();
+        n.value = ''; p.value = ''; render(); calc();
     }
 
-    function delRow(id) {
-        list = list.filter(x => x.id !== id);
-        render(); calc();
-    }
+    function delRow(id) { list = list.filter(x => x.id !== id); render(); calc(); }
 
     function render() {
         let b = document.getElementById('tBody'); b.innerHTML = '';
         list.forEach(x => {
-            b.innerHTML += `<tr><td>${x.n}</td><td>${x.d}</td><td>${x.p.toFixed(2)}</td><td class="no-print"><button class="btn btn-del" onclick="delRow(${x.id})">حذف</button></td></tr>`;
+            b.innerHTML += `<tr><td>${x.n}</td><td>${x.d}</td><td>${x.p.toLocaleString()} ريال</td><td class="no-print"><button onclick="delRow(${x.id})">حذف</button></td></tr>`;
         });
     }
 
@@ -246,13 +243,12 @@
             if(i.dataset.type === 'plus') inc += v; else exp += v;
         });
         list.forEach(x => exp += x.p);
-        let res = inc - exp;
-        document.getElementById('finalBalance').innerText = res.toLocaleString('ar-SA');
-        document.getElementById('cardStyle').style.background = (res < 0) ? '#d21312' : '#002b5b';
+        document.getElementById('finalBalance').innerText = (inc - exp).toLocaleString();
         save();
     }
 
     window.onload = load;
+    document.getElementById('ni_d').valueAsDate = new Date();
 </script>
 </body>
 </html>
