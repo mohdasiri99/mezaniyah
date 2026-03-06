@@ -52,14 +52,33 @@
         .entry-row input { width: 100px; border: 1px solid #e2e8f0; padding: 6px; border-radius: 4px; text-align: center; font-family: inherit; }
 
         .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: inherit; transition: 0.2s; font-size: 13px; }
+        .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: inherit; transition: 0.2s; font-size: 13px; text-align: center; }
         .btn-main { background: var(--secondary); color: white; }
         .btn-outline { background: #fff; border: 1px solid #cbd5e1; }
+        
+        /* قسم الإضافة المرن */
+        .add-item-box { display: flex; gap: 10px; background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+        .add-item-box input { padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: inherit; }
 
         table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
         th { background: #f8fafc; text-align: right; padding: 10px; border-bottom: 2px solid #e2e8f0; }
         td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
 
+        /* التوافق مع شاشات الجوال والتابلت (Responsive Design) */
+        @media (max-width: 768px) {
+            .app-container { padding: 10px; }
+            .paper { padding: 15px; }
+            header { flex-direction: column; text-align: center; gap: 10px; }
+            .meta-grid { grid-template-columns: 1fr; gap: 10px; } /* جعل عناصر التاريخ والاسم تحت بعض */
+            .dashboard { grid-template-columns: 1fr; } /* الرسم البياني والمربعات تحت بعض */
+            .grid-sections { grid-template-columns: 1fr; } /* جعل قسم الدخل والمصاريف تحت بعض */
+            .add-item-box { flex-direction: column; } /* جعل خانات إضافة المشتريات تحت بعض */
+            .add-item-box input { width: 100% !important; }
+            .toolbar { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+
+        /* تنسيقات الطباعة (لا تتأثر بالجوال) */
         @media print {
             .no-print { display: none !important; }
             body { background: white; padding: 0; }
@@ -70,6 +89,7 @@
             .dashboard { grid-template-columns: 1fr 1fr; }
             @page { margin: 1cm; size: A4; }
             .section-box { break-inside: avoid; }
+            .grid-sections { grid-template-columns: 1fr 1fr; } /* إعادة الأقسام بجانب بعضها في الطباعة الورقية فقط */
         }
         .print-only-val { display: none; }
     </style>
@@ -79,10 +99,7 @@
 <div class="app-container">
     <div class="toolbar no-print">
         <button class="btn btn-main" onclick="prepareAndPrint()">🖨️ طباعة الميزانية (PDF)</button>
-        <button class="btn btn-outline" onclick="exportData()">💾 حفظ نسخة احتياطية</button>
-        <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📂 استيراد</button>
-        <input type="file" id="importFile" style="display:none" onchange="importData(event)">
-        <button class="btn btn-outline" style="color:var(--danger)" onclick="clearAll()">🗑️ مسح السجل</button>
+        <button class="btn btn-outline" style="color:var(--danger)" onclick="clearAll()">🗑️ مسح السجل والبدء من جديد</button>
     </div>
 
     <div class="paper" id="mainReport">
@@ -169,17 +186,17 @@
 
         <div class="section-box" style="margin-top:20px;">
             <h3>🛒 سجل المشتريات المتغيرة</h3>
-            <div class="no-print" style="margin-bottom:15px; display:flex; gap:10px; background: #f1f5f9; padding: 10px; border-radius: 8px;">
-                <input type="text" id="itemName" placeholder="البيان (مثلاً: مقاضي البيت)" style="flex:2; padding:8px;">
-                <input type="number" id="itemVal" placeholder="المبلغ" style="flex:1; padding:8px;">
-                <button class="btn btn-main" onclick="addItem()">إضافة</button>
+            <div class="no-print add-item-box">
+                <input type="text" id="itemName" placeholder="البيان (مثلاً: مقاضي البيت)" style="flex:2;">
+                <input type="number" id="itemVal" placeholder="المبلغ" style="flex:1;">
+                <button class="btn btn-main" onclick="addItem()">إضافة للجدول</button>
             </div>
             <table>
                 <thead>
                     <tr>
                         <th>البيان</th>
                         <th>المبلغ</th>
-                        <th class="no-print">إجراء</th>
+                        <th class="no-print" style="text-align: center;">إجراء</th>
                     </tr>
                 </thead>
                 <tbody id="itemBody"></tbody>
@@ -204,7 +221,7 @@
                 labels: ['المتبقي', 'الالتزامات البنكية', 'فواتير ثابتة', 'مشتريات'],
                 datasets: [{ data: [100, 0, 0, 0], backgroundColor: ['#059669', '#dc2626', '#0891b2', '#d97706'], borderWidth: 0 }]
             },
-            options: { cutout: '70%', plugins: { legend: { position: 'bottom', labels: { font: { family: 'Noto Sans Arabic', size: 10 } } } } }
+            options: { cutout: '70%', plugins: { legend: { position: 'bottom', labels: { font: { family: 'Noto Sans Arabic', size: 10 } } } }, maintainAspectRatio: false }
         });
     }
 
@@ -239,7 +256,7 @@
         const b = document.getElementById('itemBody');
         b.innerHTML = '';
         dynamicItems.forEach((item, i) => {
-            b.innerHTML += `<tr><td>${item.n}</td><td>${item.v.toLocaleString()} ريال</td><td class="no-print"><button onclick="removeItem(${i})" style="color:red; border:none; background:none; cursor:pointer">✖</button></td></tr>`;
+            b.innerHTML += `<tr><td>${item.n}</td><td>${item.v.toLocaleString()} ريال</td><td class="no-print" style="text-align: center;"><button onclick="removeItem(${i})" style="color:red; border:none; background:none; cursor:pointer; font-size: 16px;">✖</button></td></tr>`;
         });
     }
 
@@ -266,25 +283,7 @@
         window.print();
     }
 
-    function exportData() {
-        const data = { inputs: {}, items: dynamicItems };
-        document.querySelectorAll('.calc-in, .in-save').forEach(i => data.inputs[i.id] = i.value);
-        const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob); a.download = `family_budget.json`; a.click();
-    }
-
-    function importData(e) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const data = JSON.parse(event.target.result);
-            Object.keys(data.inputs).forEach(key => { if(document.getElementById(key)) document.getElementById(key).value = data.inputs[key]; });
-            dynamicItems = data.items; renderItems(); calc();
-        };
-        reader.readAsText(e.target.files[0]);
-    }
-
-    function clearAll() { if(confirm('هل تريد مسح البيانات؟')) { localStorage.clear(); location.reload(); } }
+    function clearAll() { if(confirm('هل تريد مسح البيانات للبدء بشهر جديد؟')) { localStorage.clear(); location.reload(); } }
 
     window.onload = () => { initChart(); load(); };
 </script>
